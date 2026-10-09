@@ -10,6 +10,7 @@ import { initJourney } from './interactions/journey.js';
 import { initMadeMarquee } from './interactions/made-marquee.js';
 import { initAudioDeck } from './interactions/made-audio-deck.js';
 import { initConnect } from './interactions/connect.js';
+import { initHeaderContrast } from './interactions/header-contrast.js';
 
 for (const element of document.querySelectorAll('[data-copy]')) {
   const copy = content[element.dataset.copy];
@@ -70,4 +71,5 @@ initJourney(scroll);
 initMadeMarquee();
 initAudioDeck();
 initConnect(scroll);
+initHeaderContrast();
 window.addEventListener('load', () => scroll.refresh(), { once: true });

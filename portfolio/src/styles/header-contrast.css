@@ -1,0 +1,18 @@
+/* Optional enhancement: removing this stylesheet and its initializer restores
+   the original single header without changing layout or navigation. */
+.header-contrast-layer {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-header) + 1);
+  pointer-events: none;
+}
+.header-contrast-copy {
+  color: #fff;
+  pointer-events: none;
+  mask-image: linear-gradient(transparent, transparent);
+  mask-repeat: no-repeat;
+  mask-mode: alpha;
+}
+.header-contrast-copy a { pointer-events: none; }
+.header-contrast-copy .is-hovered { text-decoration: underline; }
+body > .site-header { color: #000; }

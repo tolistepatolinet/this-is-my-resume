@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#99E6FF" />
+    <title>Moosham — this is my resume//</title>
+    <link rel="preload" href="/assets/fonts/arial-black/Arial-Black.woff" as="font" type="font/woff" crossorigin />
+    <link rel="preload" href="/assets/fonts/cascadia/CascadiaMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav aria-label="Main navigation">
+        <a href="#about">about</a>
+        <a href="#journey">journey</a>
+        <a href="#made">made</a>
+        <a href="#connect">connect</a>
+      </nav>
+    </header>
+    <main>
+      <div class="hero-about">
+        <section class="hero" aria-label="This is my resume">
+          <h1 class="hero-marquee">SOOOOOOOOOOO</h1>
+          <p class="resume-phrase">this is my resume//</p>
+        </section>
+        <section class="about" id="about" aria-labelledby="about-title">
+          <div class="page-container section-composition">
+            <h2 id="about-title">WHO that boy:</h2>
+            <div class="about-copy body-copy" data-copy="about"></div>
+            <div class="about-arrow art-bounds" aria-hidden="true">
+              <img src="/assets/about/arrow.png" alt="" width="1254" height="1254" />
+            </div>
+          </div>
+        </section>
+        <div class="me art-bounds">
+          <img src="/assets/hero/me.png" alt="Illustration of me sitting with a laptop" width="3655" height="4730" fetchpriority="high" />
+        </div>
+      </div>
+      <section class="journey" id="journey" aria-label="Journey">
+        <div class="journey-stage">
+          <div class="journey-track" id="journey-track"></div>
+        </div>
+      </section>
+      <section class="made" id="made" aria-label="Made">
+        <section class="made-works" aria-labelledby="works-title">
+          <div class="page-container section-composition">
+            <h2 id="works-title"><span class="ink">WHAT</span> i've already<br /><span class="ink">MADE:</span></h2>
+            <div class="laptop art-bounds" aria-hidden="true">
+              <img src="/assets/made/laptop.png" alt="" width="1254" height="1254" loading="lazy" />
+            </div>
+          </div>
+          <div class="works-marquee" tabindex="0" role="region" aria-label="Portfolio works. Use left and right arrow keys to browse.">
+            <div class="works-track" id="works-track"></div>
+          </div>
+        </section>
+        <section class="made-music" aria-labelledby="music-title">
+          <div class="page-container section-composition">
+            <h2 id="music-title">...and <span class="ink">THIS</span>, too</h2>
+            <div class="music-copy body-copy" data-copy="made"></div>
+            <div class="music-title-window" aria-hidden="true"><span class="music-track-title"></span></div>
+            <button class="player art-bounds" type="button" aria-label="Play audio" aria-pressed="false">
+              <img src="/assets/made/player.png" alt="" width="1254" height="1254" loading="lazy" />
+            </button>
+            <button class="cover-deck" type="button" aria-label="Select next track">
+              <span class="covers" id="covers"></span>
+            </button>
+            <span class="sr-only" id="audio-status" role="status" aria-live="polite"></span>
+            <audio id="portfolio-audio" preload="none"></audio>
+          </div>
+        </section>
+      </section>
+    </main>
+    <footer class="connect" id="connect" aria-labelledby="connect-title">
+      <div class="page-container section-composition">
+        <h2 id="connect-title">WE <span class="ink">need each<br />other,</span> YEAH?</h2>
+        <div class="connect-copy body-copy" data-copy="connect"></div>
+        <div class="phone-placement">
+          <div class="phone art-bounds" aria-hidden="true">
+            <img src="/assets/connect/phone.png" alt="" width="1254" height="1254" loading="lazy" />
+          </div>
+        </div>
+        <p class="micro-copy" data-copy="micro"></p>
+      </div>
+      <div class="hand-reach">
+        <div class="hand-surface">
+          <img src="/assets/connect/hand.png" alt="An outstretched hand" width="2172" height="724" loading="lazy" />
+          <a class="tattoo tattoo-email" href="mailto:koftakrot@gmail.com">email &gt;</a>
+          <a class="tattoo tattoo-telegram" href="https://t.me/sirmoosham">telegram &gt;</a>
+        </div>
+      </div>
+    </footer>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

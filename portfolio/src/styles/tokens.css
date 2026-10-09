@@ -1,0 +1,85 @@
+@font-face { font-family: 'Portfolio Display'; src: url('/assets/fonts/montserrat/Montserrat-Black.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Cascadia Mono'; src: url('/assets/fonts/cascadia/CascadiaMono-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Cascadia Mono'; src: url('/assets/fonts/cascadia/CascadiaMono-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+:root {
+  --color-bg: #99e6ff;
+  --color-accent: #faca2b;
+  --color-text: #000;
+  --color-section-heading: #313131;
+  --font-display: 'Portfolio Display';
+  --display-size-scale: .92;
+  --font-body: 'Cascadia Mono';
+  --container-max: 1440px;
+  --page-padding: 48px;
+  --grid-gap: 24px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-7: 40px; --space-8: 48px;
+  --space-9: 64px; --space-10: 80px; --space-11: 96px; --space-12: 120px;
+  --space-13: 160px; --space-14: 200px; --space-15: 240px;
+  --type-display-xl: calc(clamp(96px, 13vw, 220px) * var(--display-size-scale));
+  --type-display: calc(clamp(72px, 9vw, 160px) * var(--display-size-scale));
+  --type-h1: calc(clamp(56px, 7.1vw, 114px) * var(--display-size-scale));
+  --type-h2: calc(clamp(40px, 4.5vw, 72px) * var(--display-size-scale));
+  --type-h3: calc(32px * var(--display-size-scale));
+  --type-body: 18px;
+  --type-body-large: 20px;
+  --type-small: 14px;
+  --type-caption: 12px;
+  --motion-fast: 150ms; --motion-medium: 300ms; --motion-slow: 500ms; --motion-xslow: 800ms;
+  --z-base: 0; --z-decorative: 10; --z-media: 20; --z-content: 30; --z-header: 100; --z-overlay: 200;
+  /* Desktop composition calibration. Values refer to visible artwork bounds. */
+  --composition-left: 7%;
+  --composition-top: 13.5%;
+  --hero-type: calc(clamp(520px, 52.8vw, 836px) * var(--display-size-scale));
+  --hero-type-top: 12%;
+  --header-hero-type: clamp(28px, 2.2vw, 38px);
+  --header-settled-type: clamp(16px, 1.25vw, 20px);
+  --header-hero-top: 26px;
+  --header-settled-top: 34px;
+  --header-settled-width: 570px;
+  --resume-type: clamp(28px, 2.2vw, 38px);
+  --resume-bottom: 32px;
+  --about-copy-top: 30%; --about-copy-width: 29%;
+  --arrow-left: 39%; --arrow-top: 35%; --arrow-width: 12%;
+  --journey-scroll-length: 300svh;
+  --journey-split: 50%;
+  --journey-title-top: 49%;
+  --journey-title-width: 480px;
+  --journey-copy-bottom: 9%;
+  --works-strip-top: 45%; --works-strip-height: 46%;
+  --laptop-left: 74%; --laptop-top: 12%; --laptop-width: 20%;
+  --music-copy-top: 30%; --music-copy-width: 39%;
+  --player-left: 31%; --player-top: 40%; --player-width: 18%;
+  --player-scale: .7225;
+  --player-offset-x: 3.5vw;
+  --player-offset-y: 4vh;
+  --title-text-scale: 2.7;
+  --title-origin-x: .5; --title-origin-y: .5;
+  --title-left: 7%; --title-top: 52%; --title-width: 33%;
+  --static-title-width: 22%;
+  --title-cycle: 3500ms;
+  --title-speed: 136; /* pixels per second; cycle adapts to title length */
+  --deck-left: 55%; --deck-top: 27%; --deck-width: 37%;
+  --deck-scale: .8835; /* previous .93 size reduced by another 5% */
+  --deck-offset-y: 2.5vh;
+  --cover-stack-offset-x: 24px;
+  --cover-stack-offset-y: 14px;
+  --cover-shading-step: .18;
+  --cover-shading-direction: 135deg;
+  --cover-shading-falloff: 70%;
+  --cover-radius: 10px;
+  --cover-hover-scale: 1.03;
+  --cover-exit-x: -6%; --cover-exit-y: 2%; --cover-exit-scale: .97;
+  --deck-duration: 300ms; /* half of the full cycle in motion.deck.duration */
+  --connect-copy-top: 41%; --connect-copy-width: 42%;
+  --hand-left: -18%; --hand-top: 56%; --hand-width: 72%; --hand-angle: -16deg;
+  --tattoo-type: calc(clamp(20px, 1.6vw, 28px) * var(--display-size-scale));
+  --tattoo-edge-inset: clamp(22px, 1.9444vw, 32px);
+  --tattoo-email-left: 28%; --tattoo-email-arm-edge: 79.4%;
+  --tattoo-telegram-left: 41%; --tattoo-telegram-arm-edge: 70.3%;
+  --tattoo-gap-tightening: 1.05%;
+  --phone-left: 69%; --phone-top: 12%; --phone-height: 80svh; --phone-angle: -12deg;
+  --phone-offset-x: 4vw;
+  --phone-cycle: 5200ms;
+  --micro-bottom: 5%;
+}

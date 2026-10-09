@@ -1,0 +1,66 @@
+.hero-about { position: relative; overflow: clip; }
+.hero, .about, .made-works, .made-music, .connect { min-height: 100svh; position: relative; }
+.hero { overflow: clip; }
+.hero-marquee { position: absolute; left: var(--page-padding); top: var(--hero-type-top); color: var(--color-accent); font-family: var(--font-display), sans-serif; font-size: var(--hero-type); font-weight: 700; line-height: .78; letter-spacing: -.04em; white-space: nowrap; z-index: var(--z-decorative); will-change: transform; }
+.resume-phrase { position: absolute; left: var(--page-padding); top: calc(100svh - var(--resume-bottom) - 1.2 * var(--resume-type)); font-size: var(--resume-type); line-height: 1.2; z-index: var(--z-content); }
+.me { --art-ratio: 2704 / 2571; --art-image-width: 135.17%; --art-image-left: -17.71%; --art-image-top: -20.54%; width: calc(100vw * var(--me-width)); left: 44vw; top: 3.5svh; z-index: var(--z-media); transform-origin: top left; will-change: transform; pointer-events: none; }
+.section-composition > h2 { position: absolute; left: var(--composition-left); top: var(--composition-top); }
+.about-copy { position: absolute; left: var(--composition-left); top: var(--about-copy-top); width: var(--about-copy-width); }
+.about-arrow { --art-ratio: 656 / 680; --art-image-width: 191.16%; --art-image-left: -46.34%; --art-image-top: -40.15%; left: var(--arrow-left); top: var(--arrow-top); width: var(--arrow-width); }
+.journey { height: var(--journey-scroll-length); }
+.journey-stage { position: sticky; top: 0; height: 100svh; overflow: clip; }
+.journey-track { display: flex; height: 100%; width: 100%; will-change: transform; }
+.journey-panel { position: relative; flex: 0 0 100%; height: 100%; display: grid; grid-template-columns: var(--journey-split) 1fr; }
+.journey-image { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.journey-text { position: relative; min-width: 0; }
+.journey-heading { position: absolute; top: var(--journey-title-top); left: 50%; width: calc(100% - 2 * var(--space-8)); max-width: var(--journey-title-width); transform: translateX(-50%); text-align: center; }
+.journey-heading h3 { font-size: var(--type-h3); line-height: 1.1; }
+.journey-metadata { margin-top: var(--space-2); font-size: var(--type-small); line-height: 1.4; }
+.journey-copy { position: absolute; bottom: var(--journey-copy-bottom); left: var(--space-11); right: var(--space-8); text-align: right; }
+.made-works { overflow: clip; }
+.laptop { --art-ratio: 1068 / 847; --art-image-width: 117.42%; --art-image-left: -6.09%; --art-image-top: -22.43%; left: var(--laptop-left); top: var(--laptop-top); width: var(--laptop-width); }
+.works-marquee { position: absolute; top: var(--works-strip-top); height: var(--works-strip-height); width: 100%; overflow: clip; touch-action: pan-y; }
+.works-track { display: flex; height: 100%; width: max-content; will-change: transform; }
+.works-sequence { display: flex; flex: none; height: 100%; }
+.works-sequence img { height: 100%; width: auto; max-width: none; flex: none; }
+.music-copy { position: absolute; left: var(--composition-left); top: var(--music-copy-top); width: var(--music-copy-width); }
+.player { --art-ratio: 717 / 1135; --art-image-width: 174.90%; --art-image-left: -37.52%; --art-image-top: -4.58%; width: calc(var(--player-width) * var(--player-scale)); left: calc(var(--player-left) + var(--player-offset-x)); top: calc(var(--player-top) + var(--player-offset-y)); z-index: var(--z-media); }
+.music-title-window { position: absolute; left: var(--title-left); top: var(--title-origin-top, var(--title-top)); width: var(--title-origin-width, var(--title-width)); height: auto; overflow: hidden; visibility: hidden; font-size: calc(var(--type-body-large) * var(--title-text-scale)); z-index: var(--z-decorative); pointer-events: none; }
+.music-title-window.is-playing { visibility: visible; }
+.music-track-title { display: block; width: max-content; padding-block: var(--space-2); white-space: nowrap; transform: translateX(var(--title-start, 75%)); }
+.music-title-window.is-playing .music-track-title { animation: track-title var(--title-cycle) linear infinite; }
+@keyframes track-title { from { transform: translateX(var(--title-start)); } to { transform: translateX(var(--title-end, 0px)); } }
+.cover-deck { position: absolute; left: var(--deck-left); top: calc(var(--deck-top) + var(--deck-offset-y)); width: var(--deck-width); aspect-ratio: 1; z-index: var(--z-content); text-align: initial; transform: scale(var(--deck-scale)); transform-origin: top left; }
+.covers { display: block; position: relative; width: 100%; height: 100%; }
+.cover { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: var(--cover-radius); overflow: hidden; transform-origin: center; transform: translate(calc(var(--cover-depth) * var(--cover-stack-offset-x)), calc(var(--cover-depth) * var(--cover-stack-offset-y))); z-index: var(--cover-z); transition: transform var(--deck-duration) ease-out; pointer-events: none; }
+.cover img { width: 100%; height: 100%; }
+.cover::after { content: ''; position: absolute; inset: 0; background: linear-gradient(var(--cover-shading-direction), var(--color-text) var(--cover-shading-falloff), transparent); opacity: calc(var(--cover-shade-depth) * var(--cover-shading-step)); pointer-events: none; transition: opacity var(--deck-duration) ease-out; }
+.cover-deck:not(.is-cycling):hover .cover.is-front, .cover-deck:not(.is-cycling):focus-visible .cover.is-front { transform: scale(var(--cover-hover-scale)); }
+.cover.is-outgoing { transform: translate(var(--cover-exit-x), var(--cover-exit-y)) scale(var(--cover-exit-scale)); }
+.connect { overflow: clip; }
+.connect-copy { position: absolute; left: var(--composition-left); top: var(--connect-copy-top); width: var(--connect-copy-width); font-size: var(--type-body-large); }
+.hand-reach { position: absolute; left: var(--hand-left); top: var(--hand-top); width: var(--hand-width); z-index: var(--z-media); will-change: transform; }
+.hand-surface { position: relative; transform: rotate(var(--hand-angle)); transform-origin: center; }
+.hand-surface > img { width: 100%; height: auto; }
+.tattoo { position: absolute; font-family: var(--font-display), sans-serif; font-weight: 700; font-size: var(--tattoo-type); color: var(--color-section-heading); line-height: 1.2; }
+.tattoo-email { left: calc(var(--tattoo-email-left) + var(--tattoo-gap-tightening)); bottom: calc(100% - var(--tattoo-email-arm-edge) + var(--tattoo-edge-inset)); }
+.tattoo-telegram { left: calc(var(--tattoo-telegram-left) - var(--tattoo-gap-tightening)); bottom: calc(100% - var(--tattoo-telegram-arm-edge) + var(--tattoo-edge-inset)); }
+.phone-placement { position: absolute; left: calc(var(--phone-left) + var(--phone-offset-x)); top: var(--phone-top); height: var(--phone-height); aspect-ratio: 425 / 1120; z-index: var(--z-media); transform: rotate(var(--phone-angle)); }
+.phone { --art-ratio: 425 / 1120; --art-image-width: 295.06%; --art-image-left: -103.53%; --art-image-top: -4.55%; inset: 0; }
+.phone.is-visible { animation: phone-call var(--phone-cycle) linear infinite; }
+@keyframes phone-call {
+  0%, 3.8462%, 100% { transform: rotate(0) translateX(0) scale(1); }
+  .7692% { transform: rotate(-2deg) translateX(-2px) scale(1.03); }
+  1.5385% { transform: rotate(2deg) translateX(2px) scale(1.05); }
+  2.3077% { transform: rotate(-1deg) translateX(-1px) scale(1.03); }
+  3.0769% { transform: rotate(1deg) translateX(1px) scale(1.02); }
+}
+.micro-copy { position: absolute; left: 25%; right: 25%; bottom: var(--micro-bottom); text-align: center; font-size: var(--type-caption); line-height: 1.3; white-space: pre-line; z-index: var(--z-content); }
+@media (prefers-reduced-motion: reduce) {
+  .me, .hero-marquee, .journey-track, .works-track, .hand-reach { will-change: auto; }
+  .cover, .cover::after { transition: none; }
+  .phone.is-visible { animation: none; }
+  .music-title-window { top: var(--title-top); width: var(--static-title-width); height: auto; overflow: visible; font-size: var(--type-small); line-height: 1.4; }
+  .music-track-title { width: 100%; white-space: normal; }
+  .music-title-window.is-playing .music-track-title { animation: none; transform: none; }
+}

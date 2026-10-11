@@ -7,9 +7,12 @@ import { works, tracks } from './data/made.js';
 import { createScrollController } from './interactions/scroll.js';
 import { initHeroAbout } from './interactions/hero-about.js';
 import { initJourney } from './interactions/journey.js';
+import { initJourneyComposition } from './interactions/journey-composition.js';
 import { initMadeMarquee } from './interactions/made-marquee.js';
 import { initAudioDeck } from './interactions/made-audio-deck.js';
 import { initConnect } from './interactions/connect.js';
+import { initAboutCopy } from './interactions/about-copy.js';
+import { initAboutArrow } from './interactions/about-arrow.js';
 import { initHeaderContrast } from './interactions/header-contrast.js';
 
 for (const element of document.querySelectorAll('[data-copy]')) {
@@ -18,10 +21,62 @@ for (const element of document.querySelectorAll('[data-copy]')) {
     for (const text of copy) {
       const paragraph = document.createElement('p');
       paragraph.textContent = text;
-      if (element.dataset.copy === 'about') paragraph.lang = 'ru';
+      if (element.dataset.copy === 'about' || element.dataset.copy === 'connect') {
+        paragraph.lang = 'en';
+        const emphasized = element.dataset.copy === 'connect'
+          ? /Here’s the deal:|make them real|good things happen|creative partner|Sounds like a fair trade|Let’s talk!/g
+          : /\b(digital specialist|loves|visuals|music|sound|websites|portfolio|keep going|keep growing|results)\b/gi;
+        const fragments = [];
+        let cursor = 0;
+        for (const match of text.matchAll(emphasized)) {
+          fragments.push(document.createTextNode(text.slice(cursor, match.index)));
+          const phrase = document.createElement('strong');
+          phrase.className = `${element.dataset.copy}-emphasis`;
+          phrase.textContent = match[0];
+          fragments.push(phrase);
+          cursor = match.index + match[0].length;
+        }
+        fragments.push(document.createTextNode(text.slice(cursor)));
+        paragraph.replaceChildren(...fragments);
+      }
       element.append(paragraph);
     }
-  } else element.textContent = copy;
+  } else {
+    element.textContent = copy;
+    if (element.dataset.copy === 'micro') {
+      const fragments = [];
+      let cursor = 0;
+      for (const match of copy.matchAll(/I WON’T MIND|WE ALL STEAL/g)) {
+        fragments.push(document.createTextNode(copy.slice(cursor, match.index)));
+        const phrase = document.createElement('strong');
+        phrase.className = 'micro-emphasis';
+        phrase.textContent = match[0];
+        fragments.push(phrase);
+        cursor = match.index + match[0].length;
+      }
+      fragments.push(document.createTextNode(copy.slice(cursor)));
+      element.replaceChildren(...fragments);
+    }
+    if (element.dataset.copy === 'made') {
+      const emphasized = /\b(Music|joy and sadness|real love of mine|Ableton|DAWs|have fun|something bigger)\b/g;
+      const fragments = [];
+      let cursor = 0;
+      for (const match of copy.matchAll(emphasized)) {
+        fragments.push(document.createTextNode(copy.slice(cursor, match.index)));
+        const phrase = document.createElement('strong');
+        phrase.className = 'made2-emphasis';
+        phrase.textContent = match[0];
+        fragments.push(phrase);
+        cursor = match.index + match[0].length;
+      }
+      fragments.push(document.createTextNode(copy.slice(cursor)));
+      element.replaceChildren(...fragments);
+      const shape = document.createElement('span');
+      shape.className = 'made2-player-wrap';
+      shape.setAttribute('aria-hidden', 'true');
+      element.prepend(shape);
+    }
+  }
 }
 
 const journeyTrack = document.querySelector('#journey-track');
@@ -31,7 +86,9 @@ journeyPanels.forEach((panel, index) => {
   article.setAttribute('aria-labelledby', `role-${index}`);
   article.innerHTML = `<img class="journey-image" src="${panel.image}" alt="${panel.alt}" width="1280" height="1440" loading="lazy" />
     <div class="journey-text"><div class="journey-heading"><h3 id="role-${index}">${panel.title}</h3><p class="journey-metadata">${panel.metadata}</p></div><p class="journey-copy body-copy" lang="ru"></p></div>`;
-  article.querySelector('.journey-copy').textContent = content.journey;
+  const paragraph = article.querySelector('.journey-copy');
+  paragraph.textContent = panel.copy ?? content.journey;
+  if (panel.copy) paragraph.lang = 'en';
   journeyTrack.append(article);
 });
 
@@ -67,7 +124,10 @@ tracks.forEach(track => {
 
 const scroll = createScrollController();
 initHeroAbout(scroll);
+initAboutCopy();
+initAboutArrow();
 initJourney(scroll);
+initJourneyComposition();
 initMadeMarquee();
 initAudioDeck();
 initConnect(scroll);

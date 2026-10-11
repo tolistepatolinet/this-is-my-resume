@@ -15,11 +15,16 @@ export function initAudioDeck() {
   const phaseDuration = motion.deck.duration / 2;
   deck.style.setProperty('--deck-duration', `${phaseDuration}ms`);
 
+  function position(card, depth) {
+    const scale = parseFloat(getComputedStyle(deck).getPropertyValue(`--cover-scale-${depth}`));
+    card.style.setProperty('--cover-depth', depth);
+    card.style.setProperty('--cover-scale', scale);
+  }
   function layout() {
     order.forEach((index, depth) => {
       const card = cards[index];
-      card.style.setProperty('--cover-depth', depth);
-      card.style.setProperty('--cover-shade-depth', depth);
+      position(card, depth);
+      card.style.setProperty('--cover-shade', `var(--cover-shade-${depth + 1})`);
       card.style.setProperty('--cover-z', tracks.length - depth);
       card.classList.toggle('is-front', depth === 0);
     });
@@ -40,15 +45,13 @@ export function initAudioDeck() {
     measureTitle();
     status.textContent = `Selected: ${tracks[index].title}`;
   }
-  function press() {
+  function press(action) {
     if (reducedMotion.matches) return;
     pressAnimation?.cancel();
-    const { pressScale, pressDepth, pressDuration, returnDuration } = motion.player;
-    pressAnimation = player.animate([
-      { transform: 'translateY(0) scale(1)', offset: 0 },
-      { transform: `translateY(${pressDepth}px) scale(${pressScale})`, offset: pressDuration / (pressDuration + returnDuration), easing: 'cubic-bezier(.2,.8,.2,1)' },
-      { transform: 'translateY(0) scale(1)', offset: 1 },
-    ], { duration: pressDuration + returnDuration, easing: 'ease-out' });
+    const config = motion.player;
+    pressAnimation = player.animate(config[`${action}Frames`].map(({ offset, scale, y }) => ({
+      offset, transform: `translateY(${y}px) scale(${scale})`, easing: config.easing,
+    })), { duration: config[`${action}Duration`] });
   }
   deck.addEventListener('click', async () => {
     if (busy) return;
@@ -62,7 +65,7 @@ export function initAudioDeck() {
     outgoing.classList.add('is-outgoing');
     // Rear covers advance during the outgoing cover's initial left/down motion.
     order.slice(1).forEach((index, depth) => {
-      cards[index].style.setProperty('--cover-depth', depth);
+      position(cards[index], depth);
     });
     if (!reducedMotion.matches) await new Promise(resolve => setTimeout(resolve, phaseDuration));
     order.push(order.shift());
@@ -75,8 +78,8 @@ export function initAudioDeck() {
     busy = false;
   });
   player.addEventListener('click', async () => {
-    press();
     if (selecting) return;
+    press(audio.paused ? 'play' : 'pause');
     if (!audio.paused) { audio.pause(); return; }
     const attempt = ++version;
     try {
@@ -101,14 +104,18 @@ export function initAudioDeck() {
     const css = getComputedStyle(titleWindow);
     const originX = parseFloat(css.getPropertyValue('--title-origin-x'));
     const originY = parseFloat(css.getPropertyValue('--title-origin-y'));
-    const start = player.offsetLeft + player.offsetWidth * originX - titleWindow.offsetLeft;
-    titleWindow.style.setProperty('--title-origin-width', `${start}px`);
+    const origin = player.offsetLeft + player.offsetWidth * originX;
+    const rightInset = parseFloat(css.getPropertyValue('--title-clip-right'));
+    const width = player.offsetParent.clientWidth - rightInset - origin;
+    titleWindow.style.setProperty('--title-origin-left', `${origin}px`);
+    titleWindow.style.setProperty('--title-origin-width', `${width}px`);
+    const start = -title.offsetWidth;
     titleWindow.style.setProperty('--title-origin-top', `${player.offsetTop + player.offsetHeight * originY - title.offsetHeight / 2}px`);
-    const end = -title.offsetWidth;
+    const end = width;
     const speed = parseFloat(css.getPropertyValue('--title-speed'));
     titleWindow.style.setProperty('--title-start', `${start}px`);
     titleWindow.style.setProperty('--title-end', `${end}px`);
-    titleWindow.style.setProperty('--title-cycle', `${(start - end) / speed}s`);
+    titleWindow.style.setProperty('--title-cycle', `${(end - start) / speed}s`);
   }
   new ResizeObserver(measureTitle).observe(player);
   new ResizeObserver(measureTitle).observe(titleWindow);

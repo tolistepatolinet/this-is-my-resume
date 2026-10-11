@@ -23,10 +23,16 @@ export function initHeaderContrast() {
   const images = [...main.querySelectorAll('img')];
   const blocks = [...main.querySelectorAll('[data-header-contrast-region]')];
   const textNodes = [];
-  const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
-  while (walker.nextNode()) {
-    if (walker.currentNode.textContent.trim()) textNodes.push(walker.currentNode);
+  function refreshTextNodes() {
+    textNodes.length = 0;
+    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      if (walker.currentNode.textContent.trim()) textNodes.push(walker.currentNode);
+    }
   }
+  refreshTextNodes();
+  const textObserver = new MutationObserver(refreshTextNodes);
+  textObserver.observe(main, { childList: true, subtree: true, characterData: true });
   const range = document.createRange();
   const links = [...base.querySelectorAll('a')];
   const copyLinks = [...copy.querySelectorAll('a')];
@@ -92,7 +98,7 @@ export function initHeaderContrast() {
 
   function paintText(node, header) {
     const element = node.parentElement;
-    if (!intersects(element.getBoundingClientRect(), header)) return;
+    if (!element || !node.isConnected || !intersects(element.getBoundingClientRect(), header)) return;
     const css = getComputedStyle(element);
     if (css.visibility !== 'visible' || css.display === 'none') return;
     range.selectNodeContents(node);
@@ -156,5 +162,5 @@ export function initHeaderContrast() {
   });
   observer.observe(base, { attributes: true, attributeFilter: ['style'] });
   frame = requestAnimationFrame(update);
-  return () => { cancelAnimationFrame(frame); observer.disconnect(); layer.remove(); };
+  return () => { cancelAnimationFrame(frame); observer.disconnect(); textObserver.disconnect(); layer.remove(); };
 }

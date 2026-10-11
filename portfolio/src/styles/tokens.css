@@ -9,8 +9,21 @@
   --font-display: 'Portfolio Display';
   --display-size-scale: .92;
   --font-body: 'Cascadia Mono';
+  --font-size-header-hero: 32px;
+  --font-size-header-settled: 18px;
+  --font-size-hero-display: 664px;
+  --font-size-display: 94px;
+  --font-size-journey-title: 30px;
+  --font-size-body: 14px;
+  --font-size-track-title: 36px;
+  --font-size-contact: 22px;
+  --font-size-micro: 12px;
   --container-max: 1440px;
   --page-padding: 48px;
+  --header-hero-left: var(--page-padding);
+  --content-left: var(--header-hero-left);
+  --content-local-left: calc(var(--content-left) - max(0px, (100vw - var(--container-max)) / 2));
+  --body-size: var(--font-size-body);
   --grid-gap: 24px;
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
   --space-5: 24px; --space-6: 32px; --space-7: 40px; --space-8: 48px;
@@ -18,62 +31,113 @@
   --space-13: 160px; --space-14: 200px; --space-15: 240px;
   --type-display-xl: calc(clamp(96px, 13vw, 220px) * var(--display-size-scale));
   --type-display: calc(clamp(72px, 9vw, 160px) * var(--display-size-scale));
-  --type-h1: calc(clamp(56px, 7.1vw, 114px) * var(--display-size-scale));
+  --type-h1: var(--font-size-display);
   --type-h2: calc(clamp(40px, 4.5vw, 72px) * var(--display-size-scale));
   --type-h3: calc(32px * var(--display-size-scale));
   --type-body: 18px;
   --type-body-large: 20px;
   --type-small: 14px;
-  --type-caption: 12px;
+  --type-caption: var(--font-size-micro);
   --motion-fast: 150ms; --motion-medium: 300ms; --motion-slow: 500ms; --motion-xslow: 800ms;
   --z-base: 0; --z-decorative: 10; --z-media: 20; --z-content: 30; --z-header: 100; --z-overlay: 200;
   /* Desktop composition calibration. Values refer to visible artwork bounds. */
   --composition-left: 7%;
   --composition-top: 13.5%;
-  --hero-type: calc(clamp(520px, 52.8vw, 836px) * var(--display-size-scale));
+  --hero-size-scale: .95;
+  --hero-type: var(--font-size-hero-display);
   --hero-type-top: 12%;
-  --header-hero-type: clamp(28px, 2.2vw, 38px);
-  --header-settled-type: clamp(16px, 1.25vw, 20px);
+  --hero-offset-y: 1.5vh;
+  --hero-initial-y-adjust: 0px; /* Optical adjustment to visible-type centering. */
+  --header-hero-type: var(--font-size-header-hero);
+  --header-settled-type: var(--font-size-header-settled);
   --header-hero-top: 26px;
   --header-settled-top: 34px;
-  --header-settled-width: 570px;
-  --resume-type: clamp(28px, 2.2vw, 38px);
+  --journey-right-edge: calc(100vw * var(--journey-split-ratio));
+  --settled-header-side-gap: var(--page-padding); /* Original pre-change right gap: 48px. */
+  --settled-header-right: calc(100vw - var(--settled-header-side-gap));
+  --settled-header-left: calc(var(--journey-right-edge) + var(--settled-header-side-gap));
+  --settled-header-width: calc(var(--settled-header-right) - var(--settled-header-left));
+  --header-settled-width: var(--settled-header-width);
+  --resume-type: var(--font-size-header-hero);
   --resume-bottom: 32px;
-  --about-copy-top: 30%; --about-copy-width: 29%;
-  --arrow-left: 39%; --arrow-top: 35%; --arrow-width: 12%;
+  --about-heading-body-gap: calc(30% - var(--composition-top) - var(--type-h1));
+  --about-copy-top: calc(var(--composition-top) + var(--type-h1) + var(--about-heading-body-gap));
+  --about-copy-right-adjust: 0px;
+  --arrow-left: 39%; --arrow-width: 12%;
+  --arrow-scale: .76757625; --arrow-angle: -12deg;
+  --arrow-offset-x: -2.6vw;
   --journey-scroll-length: 300svh;
-  --journey-split: 50%;
+  --journey-split-ratio: .5;
+  --journey-split: calc(100% * var(--journey-split-ratio));
   --journey-title-top: 49%;
+  --journey-title-offset-y: -5vh;
+  --journey-content-right: var(--settled-header-side-gap);
+  --journey-content-width-ratio: .7; /* Preserve current text widths and wrapping. */
+  --journey-content-width: calc((100vw - var(--journey-right-edge)) * var(--journey-content-width-ratio));
   --journey-title-width: 480px;
+  --journey-body-width: var(--settled-header-width);
   --journey-copy-bottom: 9%;
+  --journey-copy-offset-y: 13.5vh;
+  --journey-text-left: calc(var(--settled-header-left) - var(--journey-right-edge));
+  --journey-text-align: left;
+  --journey-text-heading-offset-y: 7vh;
+  --journey-text-composition-offset-y: 4.5vh;
+  --journey-text-title-size: var(--font-size-journey-title);
+  --journey-text-metadata-size: var(--journey-text-body-size);
+  --journey-text-body-size: var(--body-size);
+  --journey-text-body-offset-y: var(--space-4);
+  --journey-body-anchor-height: calc(var(--type-body) * .69255 * 1.4 * 6); /* Preserve the established six-line body start when width changes. */
   --works-strip-top: 45%; --works-strip-height: 46%;
   --laptop-left: 74%; --laptop-top: 12%; --laptop-width: 20%;
+  --laptop-scale: .9;
   --music-copy-top: 30%; --music-copy-width: 39%;
-  --player-left: 31%; --player-top: 40%; --player-width: 18%;
-  --player-scale: .7225;
-  --player-offset-x: 3.5vw;
-  --player-offset-y: 4vh;
-  --title-text-scale: 2.7;
-  --title-origin-x: .5; --title-origin-y: .5;
-  --title-left: 7%; --title-top: 52%; --title-width: 33%;
+  --made2-player-wrap-width: clamp(120px, 10vw, 160px);
+  --made2-player-wrap-height: 380px;
+  --made2-player-wrap-gap: 18px;
+  --made2-player-wrap-contour: polygon(
+    0% 0%, 3% 0%, 5% 12%, 16% 18%, 38% 22%,
+    68% 26%, 88% 30%, 94% 36%, 90% 42%,
+    96% 50%, 100% 60%, 98% 70%, 92% 80%,
+    80% 90%, 60% 100%, 0% 100%
+  );
+  --music-content-right: var(--page-padding);
+  --music-text-align: right;
+  --player-left: calc(100% - 31% - 18% * var(--player-anchor-scale)); --player-top: 40%; --player-width: 18%;
+  --player-anchor-scale: .7225; /* Preserve the established mirrored x-position when resizing. */
+  --player-scale: .686375;
+  --player-offset-x: -5vw;
+  --player-angle: -10deg;
+  --player-offset-y: 6vh;
+  --title-text-scale: 1.8;
+  --title-clip-right: var(--music-content-right);
+  --title-origin-x: .5; --title-origin-y: .68;
+  --title-left: calc(var(--deck-left) + var(--deck-width) * var(--deck-scale)); --title-top: 52%; --title-width: 33%;
   --static-title-width: 22%;
   --title-cycle: 3500ms;
   --title-speed: 136; /* pixels per second; cycle adapts to title length */
-  --deck-left: 55%; --deck-top: 27%; --deck-width: 37%;
+  --deck-left: calc(100% - 55% - 37% * var(--deck-scale)); --deck-top: 27%; --deck-width: 37%;
   --deck-scale: .8835; /* previous .93 size reduced by another 5% */
   --deck-offset-y: 2.5vh;
-  --cover-stack-offset-x: 24px;
-  --cover-stack-offset-y: 14px;
-  --cover-shading-step: .18;
-  --cover-shading-direction: 135deg;
-  --cover-shading-falloff: 70%;
+  --cover-stack-direction: -1;
+  --cover-scale-0: 1;
+  --cover-scale-1: .92;
+  --cover-scale-2: .85;
+  --cover-scale-3: .79;
+  --cover-scale-4: .74;
+  --cover-stack-offset-x: 14px;
+  --cover-stack-optical-y: 0px;
+  --cover-shade-1: 0;
+  --cover-shade-2: .18;
+  --cover-shade-3: .28;
+  --cover-shade-4: .38;
+  --cover-shade-5: .48;
   --cover-radius: 10px;
   --cover-hover-scale: 1.03;
-  --cover-exit-x: -6%; --cover-exit-y: 2%; --cover-exit-scale: .97;
+  --cover-exit-x: 6%; --cover-exit-y: 2%; --cover-exit-scale: .97;
   --deck-duration: 300ms; /* half of the full cycle in motion.deck.duration */
   --connect-copy-top: 41%; --connect-copy-width: 42%;
   --hand-left: -18%; --hand-top: 56%; --hand-width: 72%; --hand-angle: -16deg;
-  --tattoo-type: calc(clamp(20px, 1.6vw, 28px) * var(--display-size-scale));
+  --tattoo-type: var(--font-size-contact);
   --tattoo-edge-inset: clamp(22px, 1.9444vw, 32px);
   --tattoo-email-left: 28%; --tattoo-email-arm-edge: 79.4%;
   --tattoo-telegram-left: 41%; --tattoo-telegram-arm-edge: 70.3%;

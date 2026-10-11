@@ -3,30 +3,84 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { journeyPanels } from '../src/data/journey.js';
 import { tracks, works } from '../src/data/made.js';
+import { motion } from '../src/interactions/config.js';
 
 // MatchMedia is the only browser dependency of the pure scroll mapping.
 globalThis.window = { matchMedia: () => ({ matches: false }) };
-const { journeyProgress } = await import('../src/interactions/journey.js');
+const { JourneySlides } = await import('../src/interactions/journey.js');
 
-test('Journey settles at complete panels, clamps its endpoints and releases at panel 03', () => {
-  for (const [input, expected] of [[-1, 0], [0, 0], [.5, 1], [1, 2], [2, 2]]) {
-    assert.equal(journeyProgress(input), expected);
+test('Journey previews one neighbor and completes at exact full-panel boundaries', () => {
+  const slides = new JourneySlides();
+  slides.input(50, 0, 100);
+  assert.ok(slides.position > 0 && slides.position < .05);
+  slides.input(50, 20, 100);
+  assert.equal(slides.position, .05);
+  let previous = slides.position;
+  for (let t = 20; t <= 670; t += 10) {
+    slides.tick(t);
+    assert.ok(slides.position >= previous && slides.position <= 1);
+    previous = slides.position;
   }
-  assert.equal(journeyProgress(.03), 0);
-  assert.equal(journeyProgress(.48), 1);
-  assert.equal(journeyProgress(.53), 1);
-  assert.equal(journeyProgress(.98), 2);
+  assert.equal(slides.position, 1);
+  slides.input(100, 1000, 100);
+  slides.tick(1650);
+  assert.equal(slides.position, 2);
+  slides.input(-100, 2000, 100);
+  slides.tick(2650);
+  assert.equal(slides.position, 1);
+  slides.input(-100, 3000, 100);
+  slides.tick(3650);
+  assert.equal(slides.position, 0);
 });
 
-test('Journey resistance remains monotonic without bounce; reduced motion removes the easing', () => {
-  let previous = 0;
-  for (let i = 0; i <= 1000; i++) {
-    const current = journeyProgress(i / 1000);
-    assert.ok(current >= previous && current <= 2);
-    previous = current;
+test('Journey returns an abandoned preview and cannot skip a slide during one gesture', () => {
+  const slides = new JourneySlides();
+  slides.input(40, 0, 100);
+  slides.tick(180);
+  slides.tick(400);
+  assert.equal(slides.position, 0);
+  slides.input(1000, 1000, 100);
+  for (let t = 1020; t <= 2000; t += 20) {
+    slides.input(1000, t, 100);
+    slides.tick(t);
   }
-  assert.ok(journeyProgress(.25) < journeyProgress(.25, true));
-  assert.equal(journeyProgress(.5, true), 1);
+  assert.equal(slides.position, 1);
+  slides.input(100, 2300, 100, true);
+  slides.tick(2300, true);
+  assert.equal(slides.position, 2);
+});
+
+test('About entry uses a five-percent preview, settles on Journey 01 and reverses to About', () => {
+  const entry = new JourneySlides(motion.journeyEntry);
+  entry.input(100, 0, 100);
+  assert.equal(entry.position, .05);
+  for (let t = 10; t <= 900; t += 10) {
+    entry.input(1000, t, 100);
+    entry.tick(t);
+    assert.ok(entry.position >= 0 && entry.position <= 1);
+  }
+  assert.equal(entry.position, 1);
+  entry.input(-100, 1200, 100);
+  assert.equal(entry.position, .95);
+  entry.tick(1850);
+  assert.equal(entry.position, 0);
+});
+
+test('Journey boundary thresholds are twenty percent stronger and retain the same preview', () => {
+  for (const config of [motion.journeyEntry, motion.journeyExit]) {
+    assert.equal(config.thresholdViewports, motion.journey.thresholdViewports * 1.2);
+    assert.equal(config.preview, motion.journey.preview);
+    const boundary = new JourneySlides(config);
+    boundary.input(160, 0, 1000 * config.thresholdViewports);
+    assert.equal(boundary.animation, null);
+    assert.ok(boundary.position > 0 && boundary.position < .05);
+    boundary.input(32, 20, 1000 * config.thresholdViewports);
+    boundary.tick(20 + config.completionDuration);
+    assert.equal(boundary.position, 1);
+    boundary.input(-192, 1000, 1000 * config.thresholdViewports);
+    boundary.tick(1000 + config.completionDuration);
+    assert.equal(boundary.position, 0);
+  }
 });
 
 test('Every mapped asset exists and its public copy is unchanged', async () => {

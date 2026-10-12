@@ -1,3 +1,5 @@
+import { mobileHeroQuery } from './mobile-header.js';
+
 // Align visible artwork to the heading glyph without changing the text wrap.
 export function initAboutArrow() {
   const arrow = document.querySelector('.about-arrow');
@@ -7,6 +9,7 @@ export function initAboutArrow() {
   const context = canvas.getContext('2d');
   let outline;
   function measure() {
+    if (window.matchMedia(mobileHeroQuery).matches) return;
     if (!image.complete || !image.naturalWidth) return;
     if (!outline) {
       canvas.width = image.naturalWidth; canvas.height = image.naturalHeight;

@@ -1,6 +1,7 @@
 import { tracks } from '../data/made.js';
 import { motion } from './config.js';
 import { reducedMotion } from './scroll.js';
+import { mobileHeroQuery } from './mobile-header.js';
 
 export function initAudioDeck() {
   const deck = document.querySelector('.cover-deck');
@@ -10,6 +11,7 @@ export function initAudioDeck() {
   const titleWindow = document.querySelector('.music-title-window');
   const title = document.querySelector('.music-track-title');
   const status = document.querySelector('#audio-status');
+  const mobile = window.matchMedia(mobileHeroQuery);
   let order = tracks.map((_, i) => i), activeIndex = 0, busy = false, selecting = false, version = 0;
   let pressAnimation;
   const phaseDuration = motion.deck.duration / 2;
@@ -102,6 +104,33 @@ export function initAudioDeck() {
   audio.addEventListener('error', () => playingState(false));
   function measureTitle() {
     const css = getComputedStyle(titleWindow);
+    if (mobile.matches) {
+      // The deepest card's visible right edge includes every reveal step.
+      // Anchor that edge to the same inset as the mobile text, independently
+      // of player size; the reserved row keeps heading/body positions stable.
+      const bounds = player.getBoundingClientRect();
+      const composition = player.offsetParent;
+      const compositionBounds = composition.getBoundingClientRect();
+      const contentRight = compositionBounds.right - parseFloat(getComputedStyle(composition).paddingRight);
+      const reveal = parseFloat(getComputedStyle(deck).getPropertyValue('--mobile-made2-cover-reveal'));
+      const stackWidth = deck.getBoundingClientRect().width + (cards.length - 1) * reveal;
+      const deckLeft = contentRight - stackWidth;
+      deck.style.setProperty('--mobile-made2-player-deck-gap', `${deckLeft - bounds.right}px`);
+      deck.style.setProperty('--mobile-made2-deck-x', `${deckLeft - compositionBounds.left - deck.offsetLeft}px`);
+      const rowBottom = Math.max(bounds.bottom, deck.getBoundingClientRect().bottom);
+      const bodyTop = document.querySelector('.music-copy').getBoundingClientRect().top;
+      const titleBounds = titleWindow.getBoundingClientRect();
+      const previousOffset = parseFloat(css.top) || 0;
+      const centeredTop = (rowBottom + bodyTop - titleBounds.height) / 2;
+      titleWindow.style.setProperty('--mobile-made2-title-offset-y', `${centeredTop - titleBounds.top + previousOffset}px`);
+      const start = -title.offsetWidth;
+      const end = titleWindow.clientWidth;
+      const speed = parseFloat(css.getPropertyValue('--mobile-made2-title-speed'));
+      titleWindow.style.setProperty('--title-start', `${start}px`);
+      titleWindow.style.setProperty('--title-end', `${end}px`);
+      titleWindow.style.setProperty('--title-cycle', `${(end - start) / speed}s`);
+      return;
+    }
     const originX = parseFloat(css.getPropertyValue('--title-origin-x'));
     const originY = parseFloat(css.getPropertyValue('--title-origin-y'));
     const origin = player.offsetLeft + player.offsetWidth * originX;
@@ -120,6 +149,8 @@ export function initAudioDeck() {
   new ResizeObserver(measureTitle).observe(player);
   new ResizeObserver(measureTitle).observe(titleWindow);
   new ResizeObserver(measureTitle).observe(title);
+  new ResizeObserver(() => { if (mobile.matches) measureTitle(); }).observe(deck);
+  new ResizeObserver(() => { if (mobile.matches) measureTitle(); }).observe(document.querySelector('.music-copy'));
   select(0);
   layout();
   measureTitle();

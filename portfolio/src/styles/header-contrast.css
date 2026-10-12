@@ -16,3 +16,21 @@
 .header-contrast-copy a { pointer-events: none; }
 .header-contrast-copy .is-hovered { text-decoration: underline; }
 body > .site-header { color: #000; }
+
+.mobile-header-contrast-layer { display: none; }
+@media (max-width: 768px) {
+  .mobile-header-contrast-layer {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-overlay) + 1);
+    pointer-events: none;
+    mask-image: linear-gradient(transparent, transparent);
+    mask-repeat: no-repeat;
+    mask-mode: alpha;
+  }
+  .mobile-header-contrast-copy,
+  .mobile-header-contrast-copy a { color: #fff; pointer-events: none; }
+  .mobile-header-contrast-copy .mobile-menu-toggle span { background: #fff; }
+  .mobile-header-contrast-copy .mobile-menu-toggle { pointer-events: none; }
+}

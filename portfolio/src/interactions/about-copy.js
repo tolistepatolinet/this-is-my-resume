@@ -1,3 +1,5 @@
+import { mobileHeroQuery } from './mobile-header.js';
+
 // Derive the rectangular copy width from the existing heading's visible b glyph.
 export function initAboutCopy() {
   const copy = document.querySelector('.about-copy');
@@ -5,6 +7,7 @@ export function initAboutCopy() {
   const range = document.createRange();
   const context = document.createElement('canvas').getContext('2d');
   function measure() {
+    if (window.matchMedia(mobileHeroQuery).matches) return;
     const node = glyph.previousSibling;
     const start = node.textContent.lastIndexOf('b');
     range.setStart(node, start);

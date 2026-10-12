@@ -1,6 +1,12 @@
 import './styles/tokens.css';
 import './styles/global.css';
 import './styles/sections.css';
+import './styles/mobile-hero.css';
+import './styles/mobile-about.css';
+import './styles/mobile-journey.css';
+import './styles/mobile-made-01.css';
+import './styles/mobile-made-02.css';
+import './styles/mobile-connect.css';
 import { content } from './data/content.js';
 import { journeyPanels } from './data/journey.js';
 import { works, tracks } from './data/made.js';
@@ -14,6 +20,10 @@ import { initConnect } from './interactions/connect.js';
 import { initAboutCopy } from './interactions/about-copy.js';
 import { initAboutArrow } from './interactions/about-arrow.js';
 import { initHeaderContrast } from './interactions/header-contrast.js';
+import { initMobileHeader } from './interactions/mobile-header.js';
+import { initMobileAbout } from './interactions/mobile-about.js';
+import { initMobileJourneyComposition } from './interactions/mobile-journey.js';
+import { initMobileConnect } from './interactions/mobile-connect.js';
 
 for (const element of document.querySelectorAll('[data-copy]')) {
   const copy = content[element.dataset.copy];
@@ -85,7 +95,7 @@ journeyPanels.forEach((panel, index) => {
   article.className = 'journey-panel';
   article.setAttribute('aria-labelledby', `role-${index}`);
   article.innerHTML = `<img class="journey-image" src="${panel.image}" alt="${panel.alt}" width="1280" height="1440" loading="lazy" />
-    <div class="journey-text"><div class="journey-heading"><h3 id="role-${index}">${panel.title}</h3><p class="journey-metadata">${panel.metadata}</p></div><p class="journey-copy body-copy" lang="ru"></p></div>`;
+    <div class="journey-text"><div class="journey-heading"><h3 id="role-${index}">${panel.title}</h3><p class="journey-metadata">${panel.metadata}</p></div><p class="journey-copy body-copy" lang="en"></p></div>`;
   const paragraph = article.querySelector('.journey-copy');
   paragraph.textContent = panel.copy ?? content.journey;
   if (panel.copy) paragraph.lang = 'en';
@@ -123,13 +133,17 @@ tracks.forEach(track => {
 });
 
 const scroll = createScrollController();
+initMobileHeader();
+initMobileAbout(scroll);
 initHeroAbout(scroll);
 initAboutCopy();
 initAboutArrow();
 initJourney(scroll);
+initMobileJourneyComposition(scroll);
 initJourneyComposition();
 initMadeMarquee();
 initAudioDeck();
+initMobileConnect(scroll);
 initConnect(scroll);
 initHeaderContrast();
 window.addEventListener('load', () => scroll.refresh(), { once: true });

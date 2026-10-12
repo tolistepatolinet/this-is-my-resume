@@ -1,4 +1,5 @@
 import '../styles/header-contrast.css';
+import { mobileHeroQuery } from './mobile-header.js';
 
 // Known image geometry and actual artwork alpha define foreground coverage.
 // Text uses glyph masks rather than heading rectangles, leaving blue gaps black.
@@ -17,10 +18,33 @@ export function initHeaderContrast() {
   layer.append(copy);
   document.body.append(layer);
 
+  // Reuse the same foreground raster/mask for the complete mobile header.
+  const mobile = window.matchMedia(mobileHeroQuery);
+  const mobileBase = document.querySelector('body > .mobile-header');
+  const mobileLayer = document.createElement('div');
+  mobileLayer.className = 'mobile-header-contrast-layer';
+  mobileLayer.setAttribute('aria-hidden', 'true');
+  mobileLayer.inert = true;
+  const mobileCopy = mobileBase.cloneNode(true);
+  mobileCopy.classList.add('mobile-header-contrast-copy');
+  mobileCopy.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+  mobileCopy.querySelectorAll('a, button').forEach(element => { element.tabIndex = -1; });
+  mobileLayer.append(mobileCopy);
+  document.body.append(mobileLayer);
+  function syncMobile() {
+    mobileCopy.className = `${mobileBase.className} mobile-header-contrast-copy`;
+    mobileCopy.style.cssText = mobileBase.style.cssText;
+    mobileCopy.querySelector('button').setAttribute('aria-expanded', mobileBase.querySelector('button').getAttribute('aria-expanded'));
+  }
+  const mobileObserver = new MutationObserver(syncMobile);
+  mobileObserver.observe(mobileBase, { attributes: true, subtree: true, attributeFilter: ['class', 'style', 'aria-expanded'] });
+  syncMobile();
+
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
   const main = document.querySelector('main');
   const images = [...main.querySelectorAll('img')];
+  const mobileImages = [...document.querySelectorAll('main img, .connect img')];
   const blocks = [...main.querySelectorAll('[data-header-contrast-region]')];
   const textNodes = [];
   function refreshTextNodes() {
@@ -49,8 +73,18 @@ export function initHeaderContrast() {
     const rect = element.getBoundingClientRect();
     let matrix = new DOMMatrix();
     for (let parent = element; parent; parent = parent.parentElement) {
-      const transform = getComputedStyle(parent).transform;
-      if (transform !== 'none') matrix = new DOMMatrix(transform).multiply(matrix);
+      const css = getComputedStyle(parent);
+      let local = new DOMMatrix(css.transform === 'none' ? undefined : css.transform);
+      // Mobile artwork also uses independent rotate/scale properties. Translation
+      // is recovered from the measured center below, just like the desktop path.
+      if (mobile.matches) {
+        if (css.scale !== 'none') {
+          const [x, y = x] = css.scale.split(' ').map(Number);
+          local = new DOMMatrix().scale(x, y).multiply(local);
+        }
+        if (css.rotate !== 'none') local = new DOMMatrix().rotate(parseFloat(css.rotate)).multiply(local);
+      }
+      matrix = local.multiply(matrix);
     }
     const width = element.offsetWidth, height = element.offsetHeight;
     return { width, height, matrix: new DOMMatrix([
@@ -134,7 +168,14 @@ export function initHeaderContrast() {
     // Copy the variables after scroll updates, including reverse-scroll frames.
     copy.style.cssText = base.style.cssText;
     copyLinks.forEach((link, i) => link.classList.toggle('is-hovered', links[i].matches(':hover')));
-    const header = base.getBoundingClientRect();
+    let header = base.getBoundingClientRect();
+    if (mobile.matches) {
+      const icon = mobileBase.getBoundingClientRect();
+      const menu = mobileBase.querySelector('nav').getBoundingClientRect();
+      const left = Math.min(icon.left, menu.left), top = Math.min(icon.top, menu.top);
+      const right = Math.max(icon.right, menu.right), bottom = Math.max(icon.bottom, menu.bottom);
+      header = { left, top, right, bottom, width: right - left, height: bottom - top };
+    }
     const ratio = window.devicePixelRatio || 1;
     const width = Math.ceil(header.width), height = Math.ceil(header.height);
     if (canvas.width !== Math.ceil(width * ratio) || canvas.height !== Math.ceil(height * ratio)) {
@@ -142,7 +183,7 @@ export function initHeaderContrast() {
     }
     context.setTransform(ratio, 0, 0, ratio, -header.left * ratio, -header.top * ratio);
     context.clearRect(header.left, header.top, width, height);
-    images.forEach(image => {
+    (mobile.matches ? mobileImages : images).forEach(image => {
       if (image.complete && image.naturalWidth && intersects(image.getBoundingClientRect(), header)) paintImage(image);
     });
     blocks.forEach(block => {
@@ -150,8 +191,10 @@ export function initHeaderContrast() {
       context.save(); clipAncestors(block); shape(block); context.fillStyle = '#fff'; context.fill(); context.restore();
     });
     textNodes.forEach(node => paintText(node, header));
-    copy.style.maskImage = `url("${canvas.toDataURL()}")`;
-    copy.style.maskSize = `${width}px ${height}px`;
+    const target = mobile.matches ? mobileLayer : copy;
+    target.style.maskImage = `url("${canvas.toDataURL()}")`;
+    target.style.maskSize = `${width}px ${height}px`;
+    if (mobile.matches) target.style.maskPosition = `${header.left}px ${header.top}px`;
     frame = requestAnimationFrame(update);
   }
   // Synchronize immediately when the existing header changes its inline variables.
@@ -162,5 +205,5 @@ export function initHeaderContrast() {
   });
   observer.observe(base, { attributes: true, attributeFilter: ['style'] });
   frame = requestAnimationFrame(update);
-  return () => { cancelAnimationFrame(frame); observer.disconnect(); textObserver.disconnect(); layer.remove(); };
+  return () => { cancelAnimationFrame(frame); observer.disconnect(); textObserver.disconnect(); mobileObserver.disconnect(); layer.remove(); mobileLayer.remove(); };
 }

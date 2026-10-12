@@ -1,0 +1,26 @@
+:root {
+  --mobile-about-artwork-reference-inset: 12px;
+  --mobile-about-content-left: var(--mobile-content-left);
+  --mobile-about-top: 80px;
+  --mobile-about-heading-size: clamp(32px, 8.4vw, 54px);
+  --mobile-about-heading-body-gap: 12px;
+  --mobile-about-nav-gap: 12px;
+  --mobile-about-nav-clearance: calc(var(--mobile-about-nav-width, 100px) + var(--mobile-hamburger-right) + var(--mobile-about-nav-gap));
+  --mobile-about-body-width: 100%;
+  --mobile-about-body-arrow-gap: 24px;
+  --mobile-about-arrow-me-gap: 44px;
+  --mobile-about-arrow-width: 16vw;
+  --mobile-about-arrow-scale: .9;
+  --mobile-about-arrow-x: 10vw;
+  --mobile-about-arrow-angle: 25deg;
+  --mobile-about-me-scale: .94;
+  --mobile-about-me-x: 3vw;
+  --mobile-about-me-offset-y: 0px;
+  --mobile-about-bottom: 16px;
+}
+@media (max-width: 768px) {
+  .about > .section-composition { display: block; min-height: 0; padding-top: var(--mobile-about-top); padding-inline: var(--mobile-about-content-left); padding-bottom: calc(var(--mobile-about-body-arrow-gap) + var(--mobile-about-arrow-me-gap) + var(--mobile-about-me-offset-y) + var(--mobile-about-me-height, 0px) + var(--mobile-about-bottom)); }
+  .about .section-composition > h2 { position: static; font-size: var(--mobile-about-heading-size); width: max-content; max-width: 100%; white-space: nowrap; }
+  .about .about-copy { position: static; width: min(100%, var(--mobile-about-body-width)); margin-top: var(--mobile-about-heading-body-gap); }
+  .about .about-arrow { left: var(--mobile-about-arrow-x); top: var(--mobile-about-arrow-top); width: var(--mobile-about-arrow-width); transform: rotate(var(--mobile-about-arrow-angle)) scale(var(--mobile-about-arrow-scale)); }
+}

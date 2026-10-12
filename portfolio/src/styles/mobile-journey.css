@@ -1,0 +1,29 @@
+:root {
+  --mobile-journey-image-height: 51svh;
+  --mobile-journey-content-padding: var(--mobile-content-left);
+  --mobile-journey-image-title-gap: var(--mobile-journey-content-padding);
+  --mobile-journey-metadata-align: left;
+  --mobile-journey-title-size: 24px;
+  --mobile-journey-title-lines: 2;
+  --mobile-journey-metadata-size: var(--body-size);
+  --mobile-journey-metadata-lines: 2;
+  --mobile-journey-body-size: var(--body-size);
+  --mobile-journey-title-metadata-gap: 8px;
+  --mobile-journey-metadata-body-gap: 40px;
+  --mobile-journey-heading-height: 0px;
+  --mobile-journey-shortest-body-height: 0px;
+  --mobile-journey-bottom-padding: var(--mobile-journey-image-title-gap);
+  --mobile-journey-body-gap: max(var(--mobile-journey-metadata-body-gap), calc(100svh - var(--mobile-journey-image-height) - var(--mobile-journey-image-title-gap) - var(--mobile-journey-heading-height) - var(--mobile-journey-shortest-body-height) - var(--mobile-journey-bottom-padding)));
+}
+@media (max-width: 768px) {
+  .journey { height: auto; }
+  .journey-stage { position: relative; top: auto; height: auto; overflow: visible; }
+  .journey-track { display: block; height: auto; width: 100%; transform: none !important; will-change: auto; }
+  .journey-panel { display: block; height: auto; min-height: 100svh; }
+  .journey-image { width: 100%; height: var(--mobile-journey-image-height); object-fit: cover; }
+  .journey-text { transform: none; padding: var(--mobile-journey-content-padding); padding-top: var(--mobile-journey-image-title-gap); padding-bottom: var(--mobile-journey-bottom-padding); }
+  .journey-heading { position: static; width: 100%; max-width: none; text-align: left; }
+  .journey-heading h3 { font-size: var(--mobile-journey-title-size);  }
+  .journey-metadata { font-size: var(--mobile-journey-metadata-size); min-height: calc(var(--mobile-journey-metadata-size) * 1.4 * var(--mobile-journey-metadata-lines)); margin-top: var(--mobile-journey-title-metadata-gap); text-align: var(--mobile-journey-metadata-align); }
+  .journey .journey-panel .journey-copy { position: static; width: 100%; margin-top: var(--mobile-journey-body-gap); font-size: var(--mobile-journey-body-size); text-align: left; }
+}

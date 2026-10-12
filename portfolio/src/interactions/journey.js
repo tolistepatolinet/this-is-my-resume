@@ -1,6 +1,7 @@
 import { motion } from './config.js';
 import { clamp, reducedMotion, documentTop } from './scroll.js';
 import { initJourneyEntry, initJourneyExit } from './journey-entry.js';
+import { mobileHeroQuery } from './mobile-header.js';
 
 // Gesture latching allows exactly one neighboring slide per continuous gesture.
 export class JourneySlides {
@@ -43,6 +44,7 @@ export class JourneySlides {
 }
 
 export function initJourney(scroll) {
+  const mobile = window.matchMedia(mobileHeroQuery);
   const section = document.querySelector('.journey');
   const stage = document.querySelector('.journey-stage');
   const track = document.querySelector('.journey-track');
@@ -51,8 +53,8 @@ export function initJourney(scroll) {
   const exit = initJourneyExit(scroll, slides, JourneySlides);
   const boundaryOwnsScroll = () => entry.ownsScroll() || exit.ownsScroll();
   let top, length, width, height, previousY = window.scrollY, internalY = null;
-  const render = () => { if (width) track.style.transform = `translateX(${-slides.position * width}px)`; };
-  const pinned = () => window.scrollY >= top && window.scrollY <= top + length;
+  const render = () => { if (!mobile.matches && width) track.style.transform = `translateX(${-slides.position * width}px)`; };
+  const pinned = () => !mobile.matches && window.scrollY >= top && window.scrollY <= top + length;
   function anchor() {
     internalY = top + slides.index * length / 2;
     window.scrollTo({ top: internalY, behavior: 'instant' });
@@ -66,6 +68,15 @@ export function initJourney(scroll) {
     if (slides.animation || slides.locked && performance.now() - slides.lastInput <= motion.journey.gestureIdle) return true;
     return !(slides.index === 0 && delta < 0 || slides.index === 2 && delta > 0);
   }
+  document.querySelectorAll('body > .site-header a[href="#journey"], .mobile-header a[href="#journey"]').forEach(link => link.addEventListener('click', event => {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    entry.cancel(); exit.cancel();
+    slides.reset(0);
+    // Let the native anchor navigate normally, but distinguish its destination
+    // from natural upward entry, which must still start on the last slide.
+    internalY = previousY = documentTop(section);
+    render();
+  }));
   // Claim pinned scroll before any element-level wheel handler can consume it.
   // Ownership depends only on scroll geometry, never the pointer's hit target.
   window.addEventListener('wheel', event => {
@@ -90,6 +101,7 @@ export function initJourney(scroll) {
       width = stage.clientWidth; height = stage.offsetHeight;
     },
     update(scrollY) {
+      if (mobile.matches) { previousY = scrollY; internalY = null; return; }
       if (boundaryOwnsScroll()) { previousY = scrollY; render(); return; }
       if (internalY !== null && Math.abs(scrollY - internalY) < 1) internalY = null;
       else if (scrollY !== previousY && scrollY >= top && scrollY <= top + length) {
@@ -103,7 +115,7 @@ export function initJourney(scroll) {
     },
   });
   function tick(time) {
-    if (slides.tick(time, reducedMotion.matches) && pinned()) anchor();
+    if (!mobile.matches && slides.tick(time, reducedMotion.matches) && pinned()) anchor();
     render(); requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);

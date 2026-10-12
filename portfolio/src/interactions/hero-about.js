@@ -1,5 +1,6 @@
 import { motion } from './config.js';
 import { clamp, lerp, reducedMotion, documentTop } from './scroll.js';
+import { mobileHeroQuery } from './mobile-header.js';
 
 export function initHeroAbout(scroll) {
   const header = document.querySelector('.site-header');
@@ -10,8 +11,33 @@ export function initHeroAbout(scroll) {
   const marquee = document.querySelector('.hero-marquee');
   me.style.setProperty('--me-width', motion.hero.meWidth);
   let geometry;
+  const mobile = window.matchMedia(mobileHeroQuery);
+  mobile.addEventListener('change', () => scroll.refresh());
   scroll.add({
     measure() {
+      if (mobile.matches) {
+        me.style.width = me.style.left = me.style.top = me.style.transform = '';
+        const ruler = document.createElement('span');
+        ruler.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;left:var(--mobile-hero-scroll-travel);top:var(--mobile-me-y)';
+        document.body.append(ruler);
+        const travel = parseFloat(getComputedStyle(ruler).left);
+        const startY = parseFloat(getComputedStyle(ruler).top);
+        ruler.style.left = 'var(--mobile-me-x)';
+        const startX = parseFloat(getComputedStyle(ruler).left);
+        ruler.style.left = 'var(--mobile-about-me-x)';
+        const endX = parseFloat(getComputedStyle(ruler).left);
+        const mobileCSS = getComputedStyle(document.documentElement);
+        const startScale = parseFloat(mobileCSS.getPropertyValue('--mobile-me-scale'));
+        const endScale = parseFloat(mobileCSS.getPropertyValue('--mobile-about-me-scale')) / startScale;
+        const composition = about.querySelector('.section-composition');
+        const endY = documentTop(about) - documentTop(stage) + parseFloat(getComputedStyle(composition).getPropertyValue('--mobile-about-me-top'));
+        const startCrop = Math.max(0, me.offsetHeight + startY - hero.offsetHeight);
+        ruler.remove();
+        geometry = { mobile: true, top: documentTop(stage), height: hero.offsetHeight, travel, startX, startY, endX, endY, endScale, startCrop };
+        me.style.left = me.style.top = '0';
+        return;
+      }
+      me.style.clipPath = '';
       const css = getComputedStyle(document.documentElement);
       const width = window.innerWidth;
       const height = hero.offsetHeight;
@@ -80,6 +106,14 @@ export function initHeroAbout(scroll) {
     },
     update(scrollY) {
       const g = geometry;
+      if (g.mobile) {
+        const progress = clamp((scrollY - g.top) / g.height);
+        marquee.style.transform = reducedMotion.matches ? 'none' : `translateX(${g.travel * progress}px)`;
+        me.style.transform = `translate(${lerp(g.startX, g.endX, progress)}px, ${lerp(g.startY, g.endY, progress)}px) scale(${lerp(1, g.endScale, progress)})`;
+        me.style.clipPath = `inset(0 0 ${lerp(g.startCrop, 0, progress)}px 0)`;
+        stage.classList.remove('is-settled');
+        return;
+      }
       const local = Math.max(0, scrollY - g.top);
       const p = clamp(local / (g.height * motion.hero.scrollViewports));
       // Smootherstep has zero velocity and acceleration at both endpoints.

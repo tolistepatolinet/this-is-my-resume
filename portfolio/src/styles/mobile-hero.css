@@ -1,0 +1,50 @@
+/* Independent mobile Header/Hero calibration; desktop tokens stay untouched. */
+:root {
+  --mobile-content-left: 16px;
+  --mobile-content-right: var(--mobile-content-left);
+  --mobile-hero-travel-multiplier: 2;
+  --mobile-hamburger-size: 48px;
+  --mobile-hamburger-top: 8px;
+  --mobile-hamburger-right: 16px;
+  --mobile-header-axis-right: 54px;
+  --mobile-hamburger-line-width: 32px;
+  --mobile-hamburger-line-height: 3px;
+  --mobile-hamburger-line-gap: 6px;
+  --mobile-nav-font-size: 18px;
+  /* Preserve the measured footprint used by the existing About copy clearance. */
+  --mobile-nav-width: 90.234375px;
+  --mobile-nav-item-height: 48px;
+  --mobile-nav-spacing: 8px;
+  --mobile-nav-top-gap: 12px;
+  --mobile-nav-duration: 300ms;
+  --mobile-nav-reveal-y: -8px;
+  --mobile-hero-display-size: 68vw;
+  --mobile-hero-display-x: 2vw;
+  --mobile-hero-display-y: 9.7svh;
+  --mobile-hero-scroll-travel: calc(-100vw * var(--mobile-hero-travel-multiplier));
+  --mobile-me-scale: 1.65;
+  --mobile-me-x: -37.5vw;
+  --mobile-me-y: 37.5svh;
+}
+.mobile-header { display: none; }
+@media (max-width: 768px) {
+  body > .site-header, .header-contrast-layer { display: none; }
+  .mobile-header { display: block; position: fixed; top: var(--mobile-hamburger-top); right: calc(var(--mobile-header-axis-right) - var(--mobile-hamburger-size) / 2); z-index: var(--z-overlay); background: transparent; }
+  .mobile-menu-toggle { position: relative; width: var(--mobile-hamburger-size); height: var(--mobile-hamburger-size); border: 0; background: transparent; box-shadow: none; outline: none; }
+  .mobile-menu-toggle:focus-visible { outline: 2px solid var(--color-text); outline-offset: var(--space-1); }
+  .mobile-menu-toggle span { position: absolute; left: 50%; top: 50%; display: block; width: var(--mobile-hamburger-line-width); height: var(--mobile-hamburger-line-height); background: var(--color-text); transform: translate(-50%, -50%); transition: transform var(--mobile-nav-duration) ease-in-out, opacity var(--mobile-nav-duration) ease-in-out; }
+  .mobile-menu-toggle span:first-child { transform: translate(-50%, -50%) translateY(calc(-1 * (var(--mobile-hamburger-line-height) + var(--mobile-hamburger-line-gap)))); }
+  .mobile-menu-toggle span:last-child { transform: translate(-50%, -50%) translateY(calc(var(--mobile-hamburger-line-height) + var(--mobile-hamburger-line-gap))); }
+  .mobile-header.is-open .mobile-menu-toggle span:first-child { transform: translate(-50%, -50%) rotate(45deg); }
+  .mobile-header.is-open .mobile-menu-toggle span:nth-child(2) { transform: translate(-50%, -50%) scaleX(0); opacity: 0; }
+  .mobile-header.is-open .mobile-menu-toggle span:last-child { transform: translate(-50%, -50%) rotate(-45deg); }
+  .mobile-navigation { position: absolute; top: calc(var(--mobile-hamburger-size) + var(--mobile-nav-top-gap)); left: 50%; width: var(--mobile-nav-width); translate: -50% 0; display: flex; flex-direction: column; gap: var(--mobile-nav-spacing); font-family: var(--font-body), monospace; font-size: var(--mobile-nav-font-size); font-weight: 400; line-height: 1.2; text-align: center; opacity: 0; visibility: hidden; clip-path: inset(0 0 100% 0); transform: translateY(var(--mobile-nav-reveal-y)); transition: opacity var(--mobile-nav-duration) ease-in-out, transform var(--mobile-nav-duration) ease-in-out, clip-path var(--mobile-nav-duration) ease-in-out, visibility 0s var(--mobile-nav-duration); }
+  .mobile-navigation a { display: flex; align-items: center; justify-content: center; min-height: var(--mobile-nav-item-height); min-width: var(--mobile-hamburger-size); }
+  .mobile-header.is-open .mobile-navigation { visibility: visible; opacity: 1; clip-path: inset(0); transform: translateY(0); transition-delay: 0s; }
+  .hero .resume-phrase { display: none; }
+  .hero-marquee { font-size: var(--mobile-hero-display-size); left: var(--mobile-hero-display-x); top: var(--mobile-hero-display-y); }
+  .hero-about > .me { width: calc(100vw * var(--mobile-me-scale)); left: var(--mobile-me-x); top: var(--mobile-me-y); transform: none; clip-path: inset(0 0 max(0px, calc(100% + var(--mobile-me-y) - 100svh)) 0); }
+}
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  .mobile-navigation, .mobile-menu-toggle span { transition: none; }
+}

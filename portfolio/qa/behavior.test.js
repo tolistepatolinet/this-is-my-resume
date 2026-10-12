@@ -87,10 +87,11 @@ test('Every mapped asset exists and its public copy is unchanged', async () => {
   const paths = [...journeyPanels.map(p => p.image), ...works.map(w => w.src), ...tracks.flatMap(t => [t.cover, t.audio]),
     '/assets/hero/me.png', '/assets/about/arrow.png', '/assets/made/laptop.png', '/assets/made/player.png',
     '/assets/connect/hand.png', '/assets/connect/phone.png',
-    '/assets/fonts/arial-black/Arial-Black.woff', '/assets/fonts/cascadia/CascadiaMono-Regular.woff2', '/assets/fonts/cascadia/CascadiaMono-Bold.woff2'];
+    '/assets/fonts/montserrat/Montserrat-Black.woff2', '/assets/fonts/cascadia/CascadiaMono-Regular.woff2', '/assets/fonts/cascadia/CascadiaMono-Bold.woff2'];
   assert.equal(paths.length, 28);
   for (const path of paths) {
-    const source = await readFile(new URL(`..${path}`, import.meta.url));
+    const sourcePath = path.replace('/fonts/montserrat/', '/fonts/montserrat-black/');
+    const source = await readFile(new URL(`..${sourcePath}`, import.meta.url));
     const published = await readFile(new URL(`../public${path}`, import.meta.url));
     assert.ok(source.equals(published), path);
   }

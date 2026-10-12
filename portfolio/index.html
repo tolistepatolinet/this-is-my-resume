@@ -5,12 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#99E6FF" />
     <title>Moosham — this is my resume//</title>
-    <link rel="preload" href="/assets/fonts/arial-black/Arial-Black.woff" as="font" type="font/woff" crossorigin />
+    <link rel="preload" href="/assets/fonts/montserrat/Montserrat-Black.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/assets/fonts/cascadia/CascadiaMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <header class="site-header">
       <nav aria-label="Main navigation">
+        <a href="#about">about</a>
+        <a href="#journey">journey</a>
+        <a href="#made">made</a>
+        <a href="#connect">connect</a>
+      </nav>
+    </header>
+    <header class="mobile-header">
+      <button class="mobile-menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-navigation">
+        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </button>
+      <nav class="mobile-navigation" id="mobile-navigation" aria-label="Mobile navigation" inert>
         <a href="#about">about</a>
         <a href="#journey">journey</a>
         <a href="#made">made</a>
@@ -49,6 +60,7 @@
               <img src="/assets/made/laptop.png" alt="" width="1254" height="1254" loading="lazy" />
             </div>
           </div>
+          <div class="works-divider" aria-hidden="true"></div>
           <div class="works-marquee" tabindex="0" role="region" aria-label="Portfolio works. Use left and right arrow keys to browse.">
             <div class="works-track" id="works-track"></div>
           </div>

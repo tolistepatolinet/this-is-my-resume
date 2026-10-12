@@ -1,5 +1,6 @@
 import { motion } from './config.js';
 import { documentTop, reducedMotion } from './scroll.js';
+import { mobileHeroQuery } from './mobile-header.js';
 
 // This vertical boundary uses the same motion model as the horizontal slides,
 // without changing the internal slide configuration or any section geometry.
@@ -19,6 +20,7 @@ export function initJourneyExit(scroll, internalSlides, Slides) {
 }
 
 function initBoundary(scroll, internalSlides, Slides, config, slideIndex, measureBounds) {
+  const mobile = window.matchMedia(mobileHeroQuery);
   const entry = new Slides(config);
   let lowerTop, upperTop, height, origin, controlling = false, settledAt = null;
 
@@ -35,6 +37,7 @@ function initBoundary(scroll, internalSlides, Slides, config, slideIndex, measur
   }
 
   function handle(delta, event) {
+    if (mobile.matches) return;
     if (!controlling) {
       const y = window.scrollY;
       const gestureQuiet = performance.now() - internalSlides.lastInput > config.gestureIdle;
@@ -81,6 +84,7 @@ function initBoundary(scroll, internalSlides, Slides, config, slideIndex, measur
     },
   });
   function tick(time) {
+    if (mobile.matches) controlling = false;
     if (controlling) {
       entry.tick(time, reducedMotion.matches);
       window.scrollTo({ top: origin + (upperTop - origin) * entry.position, behavior: 'instant' });
@@ -93,5 +97,8 @@ function initBoundary(scroll, internalSlides, Slides, config, slideIndex, measur
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
-  return { ownsScroll: () => controlling };
+  return {
+    ownsScroll: () => controlling,
+    cancel() { controlling = false; settledAt = null; entry.reset(0); },
+  };
 }

@@ -1,0 +1,46 @@
+:root {
+  --mobile-connect-heading-size: clamp(36px, 10vw, 64px);
+  --mobile-connect-top: 88px;
+  --mobile-connect-content-left: var(--mobile-content-left);
+  --mobile-connect-body-gap: 20px;
+  --mobile-connect-body-width: 100%;
+  --mobile-connect-contact-gap: 24px;
+  --mobile-connect-contact-spacing: 8px;
+  --mobile-connect-contact-hit-height: 44px;
+  --mobile-connect-art-gap: 24px;
+  --mobile-connect-art-height: 120vw;
+  --mobile-connect-hand-scale: 1.265;
+  --mobile-connect-hand-x: -32vw;
+  --mobile-connect-hand-y: calc(var(--mobile-connect-phone-y) + 44vw);
+  --mobile-connect-hand-start-x: -.45;
+  --mobile-connect-hand-start-y: .55;
+  /* Viewport-based starting displacement, independent of the final target. */
+  --mobile-connect-hand-start-y-viewport-offset: .165;
+  --mobile-connect-hand-end-x: -.16;
+  --mobile-connect-hand-end-y: .65;
+  --mobile-connect-hand-progress-entry: .35;
+  --mobile-connect-hand-progress-end-inset: 0px;
+  --mobile-connect-hand-angle: -45deg;
+  --mobile-connect-phone-scale: 1.5045;
+  --mobile-connect-phone-height: 60vw;
+  --mobile-connect-phone-x: 50vw;
+  --mobile-connect-phone-y: calc(420px - 4vh);
+  --mobile-connect-phone-angle: -13deg;
+  --mobile-connect-micro-gap: 24px;
+  --mobile-connect-micro-bottom: 16px;
+  --mobile-connect-bottom: 32px;
+}
+.mobile-contact-group, .mobile-connect-artwork { display: none; }
+@media (max-width: 768px) {
+  .connect { min-height: 0; }
+  .connect > .section-composition { display: block; min-height: 0; padding: var(--mobile-connect-top) var(--mobile-connect-content-left) var(--mobile-connect-bottom); }
+  .connect .section-composition > h2 { position: static; font-size: var(--mobile-connect-heading-size); }
+  .connect .connect-copy { position: static; width: var(--mobile-connect-body-width); margin-top: var(--mobile-connect-body-gap); }
+  .mobile-contact-group { position: relative; z-index: var(--z-content); display: flex; flex-direction: column; align-items: flex-start; gap: var(--mobile-connect-contact-spacing); margin-top: var(--mobile-connect-contact-gap); }
+  .mobile-contact-group .tattoo { position: static; display: flex; align-items: center; min-height: var(--mobile-connect-contact-hit-height); min-width: var(--mobile-connect-contact-hit-height); }
+  .mobile-connect-artwork { display: block; position: absolute; inset: 0; pointer-events: none; overflow: clip; }
+  .mobile-connect-artwork .hand-reach { left: var(--mobile-connect-hand-x); top: var(--mobile-connect-hand-y); width: calc(100vw * var(--mobile-connect-hand-scale)); will-change: auto; }
+  .mobile-connect-artwork .hand-surface { transform: rotate(var(--mobile-connect-hand-angle)); }
+  .mobile-connect-artwork .phone-placement { left: var(--mobile-connect-phone-x); top: var(--mobile-connect-phone-y); height: calc(var(--mobile-connect-phone-height) * var(--mobile-connect-phone-scale)); transform: rotate(var(--mobile-connect-phone-angle)); z-index: var(--z-content); }
+  .connect .micro-copy { position: static; width: 100%; margin-top: calc(var(--mobile-connect-art-gap) + var(--mobile-connect-art-height) + var(--mobile-connect-micro-gap)); margin-bottom: var(--mobile-connect-micro-bottom); }
+}

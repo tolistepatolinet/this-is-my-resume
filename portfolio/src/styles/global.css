@@ -1,5 +1,7 @@
 * { box-sizing: border-box; }
 html { background: var(--color-bg); }
+/* Keep native scrolling and momentum inside the root document boundaries. */
+html, body { overscroll-behavior-y: none; }
 body { margin: 0; color: var(--color-text); background: var(--color-bg); font-family: var(--font-body), monospace; overflow-x: clip; }
 button, a { -webkit-tap-highlight-color: transparent; }
 button { font: inherit; color: inherit; padding: 0; border: 0; background: transparent; cursor: pointer; }

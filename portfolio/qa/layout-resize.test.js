@@ -1,0 +1,20 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { listenForLayoutResize } from '../src/interactions/layout-resize.js';
+test('Mobile chrome resize does not invalidate animation geometry; width and orientation do', () => {
+  const events = {};
+  const target = { innerWidth: 390, addEventListener(name, callback) { events[name] = callback; } };
+  let measurements = 0;
+  listenForLayoutResize(() => measurements++, target);
+  for (let i = 0; i < 18; i++) events.resize();
+  assert.equal(measurements, 0);
+  target.innerWidth = 430;
+  events.resize();
+  assert.equal(measurements, 1);
+  events.orientationchange();
+  assert.equal(measurements, 2);
+  target.innerWidth = 1440;
+  events.resize();
+  events.resize();
+  assert.equal(measurements, 4);
+});

@@ -34,3 +34,11 @@ body > .site-header { color: #000; }
   .mobile-header-contrast-copy .mobile-menu-toggle span { background: #fff; }
   .mobile-header-contrast-copy .mobile-menu-toggle { pointer-events: none; }
 }
+
+/* Mobile uses a stable white header; desktop contrast remains independent. */
+@media (max-width: 768px) {
+  .mobile-header-contrast-layer { display: none; }
+  body > .mobile-header,
+  body > .mobile-header .mobile-navigation a { color: #FFFFFF; }
+  body > .mobile-header .mobile-menu-toggle span { background: #FFFFFF; }
+}

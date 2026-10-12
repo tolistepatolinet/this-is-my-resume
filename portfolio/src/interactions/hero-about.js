@@ -1,6 +1,8 @@
 import { motion } from './config.js';
 import { clamp, lerp, reducedMotion, documentTop } from './scroll.js';
 import { mobileHeroQuery } from './mobile-header.js';
+import { createMobileScrollAnimation } from './mobile-scroll-animation.js';
+import { createNativeMobileScroll } from './native-mobile-scroll.js';
 
 export function initHeroAbout(scroll) {
   const header = document.querySelector('.site-header');
@@ -8,11 +10,48 @@ export function initHeroAbout(scroll) {
   const hero = document.querySelector('.hero');
   const about = document.querySelector('.about');
   const me = document.querySelector('.me');
+  // Keep the same ME image. Two cancelling translations animate only the clip
+  // boundary, avoiding a large-image clip-path repaint on every mobile frame.
+  const meClip = document.createElement('div');
+  const meArt = document.createElement('div');
+  meClip.className = 'me-mobile-clip';
+  meArt.className = 'me-mobile-art';
+  meArt.append(me.querySelector('img'));
+  meClip.append(meArt);
+  me.append(meClip);
   const marquee = document.querySelector('.hero-marquee');
   me.style.setProperty('--me-width', motion.hero.meWidth);
   let geometry;
   const mobile = window.matchMedia(mobileHeroQuery);
+  const nativeAnimation = createNativeMobileScroll({ media: mobile, reducedMotion });
   mobile.addEventListener('change', () => scroll.refresh());
+  const mobileAnimation = createMobileScrollAnimation({
+    media: mobile, reducedMotion,
+    isNative: nativeAnimation.active,
+    rate: motion.mobileScroll.heroDamping,
+    epsilon: motion.mobileScroll.settleEpsilon,
+    getTarget: y => geometry?.mobile ? clamp((y - geometry.top) / geometry.height) : null,
+    render(progress) {
+      const g = geometry;
+      marquee.style.transform = reducedMotion.matches ? 'none' : `translate3d(${g.travel * progress}px, 0, 0)`;
+      stage.classList.remove('is-settled');
+    },
+  });
+  // ME owns one continuous RAF writer; the marquee retains its native timeline.
+  const meAnimation = createMobileScrollAnimation({
+    media: mobile, reducedMotion,
+    rate: motion.mobileScroll.meDamping,
+    epsilon: motion.mobileScroll.meSettleEpsilon,
+    renderEveryFrame: true,
+    getTarget: y => geometry?.mobile ? clamp((y - geometry.top) / geometry.height) : null,
+    render(progress) {
+      const g = geometry;
+      me.style.transform = `translate3d(${lerp(g.startX, g.endX, progress)}px, ${lerp(g.startY, g.endY, progress)}px, 0) scale(${lerp(1, g.endScale, progress)})`;
+      const crop = lerp(g.startCrop, 0, progress);
+      meClip.style.transform = `translate3d(0, ${-crop}px, 0)`;
+      meArt.style.transform = `translate3d(0, ${crop}px, 0)`;
+    },
+  });
   scroll.add({
     measure() {
       if (mobile.matches) {
@@ -34,9 +73,21 @@ export function initHeroAbout(scroll) {
         const startCrop = Math.max(0, me.offsetHeight + startY - hero.offsetHeight);
         ruler.remove();
         geometry = { mobile: true, top: documentTop(stage), height: hero.offsetHeight, travel, startX, startY, endX, endY, endScale, startCrop };
+        me.style.clipPath = 'none';
         me.style.left = me.style.top = '0';
+        nativeAnimation.refresh({ start: geometry.top, end: geometry.top + geometry.height,
+          tracks: [
+            { element: marquee, frames: [
+              { transform: 'translate3d(0px, 0, 0)' }, { transform: `translate3d(${travel}px, 0, 0)` },
+            ] },
+          ] });
+        stage.classList.remove('is-settled');
+        me.setAttribute('data-mobile-scroll-driver', reducedMotion.matches ? 'reduced' : 'raf');
+        mobileAnimation.refresh();
+        meAnimation.refresh();
         return;
       }
+      meClip.style.transform = meArt.style.transform = '';
       me.style.clipPath = '';
       const css = getComputedStyle(document.documentElement);
       const width = window.innerWidth;
@@ -106,14 +157,7 @@ export function initHeroAbout(scroll) {
     },
     update(scrollY) {
       const g = geometry;
-      if (g.mobile) {
-        const progress = clamp((scrollY - g.top) / g.height);
-        marquee.style.transform = reducedMotion.matches ? 'none' : `translateX(${g.travel * progress}px)`;
-        me.style.transform = `translate(${lerp(g.startX, g.endX, progress)}px, ${lerp(g.startY, g.endY, progress)}px) scale(${lerp(1, g.endScale, progress)})`;
-        me.style.clipPath = `inset(0 0 ${lerp(g.startCrop, 0, progress)}px 0)`;
-        stage.classList.remove('is-settled');
-        return;
-      }
+      if (g.mobile) return; // Mobile is rendered only by its continuous RAF sampler.
       const local = Math.max(0, scrollY - g.top);
       const p = clamp(local / (g.height * motion.hero.scrollViewports));
       // Smootherstep has zero velocity and acceleration at both endpoints.

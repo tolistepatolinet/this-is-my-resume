@@ -1,3 +1,4 @@
+import { listenForLayoutResize } from './layout-resize.js';
 export const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 export const lerp = (start, end, progress) => start + (end - start) * progress;
 export const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -20,7 +21,7 @@ export function createScrollController() {
     if (!frame) frame = requestAnimationFrame(update);
   }
   window.addEventListener('scroll', () => request(), { passive: true });
-  window.addEventListener('resize', () => request(true), { passive: true });
+  listenForLayoutResize(() => request(true));
   window.addEventListener('pageshow', () => request(true));
   reducedMotion.addEventListener('change', () => request(true));
   document.fonts.ready.then(() => request(true));

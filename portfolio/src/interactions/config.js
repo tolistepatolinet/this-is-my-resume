@@ -1,5 +1,6 @@
 // All scroll/motion calibration belongs here or in styles/tokens.css.
 export const motion = {
+  mobileScroll: { heroDamping: 45, meDamping: 60, meSettleEpsilon: .0000001, connectDamping: 45, settleEpsilon: .00001 },
   hero: {
     scrollViewports: 1,
     meWidth: .564,

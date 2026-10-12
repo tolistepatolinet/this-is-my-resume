@@ -1,3 +1,4 @@
+import { listenForLayoutResize } from './layout-resize.js';
 import { mobileHeroQuery } from './mobile-header.js';
 
 export function initMobileAbout(scroll) {
@@ -28,7 +29,7 @@ export function initMobileAbout(scroll) {
     scroll.refresh();
   }
   new ResizeObserver(measure).observe(copy);
-  window.addEventListener('resize', measure, { passive: true });
+  listenForLayoutResize(measure);
   document.fonts.ready.then(measure);
   measure();
 }

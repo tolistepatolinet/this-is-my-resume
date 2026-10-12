@@ -1,3 +1,4 @@
+import { createMobileHeaderMask } from './mobile-header-mask.js';
 import '../styles/header-contrast.css';
 import { mobileHeroQuery } from './mobile-header.js';
 
@@ -163,7 +164,14 @@ export function initHeaderContrast() {
     context.restore();
   }
 
+  const mobileMask = createMobileHeaderMask({ layer: mobileLayer, base: mobileBase,
+    images: mobileImages, blocks, textNodes, geometry, main });
+
   function update() {
+    if (mobile.matches) {
+      frame = requestAnimationFrame(update);
+      return;
+    }
     // The original header remains the sole source of layout/transition values.
     // Copy the variables after scroll updates, including reverse-scroll frames.
     copy.style.cssText = base.style.cssText;
@@ -171,10 +179,16 @@ export function initHeaderContrast() {
     let header = base.getBoundingClientRect();
     if (mobile.matches) {
       const icon = mobileBase.getBoundingClientRect();
-      const menu = mobileBase.querySelector('nav').getBoundingClientRect();
-      const left = Math.min(icon.left, menu.left), top = Math.min(icon.top, menu.top);
-      const right = Math.max(icon.right, menu.right), bottom = Math.max(icon.bottom, menu.bottom);
-      header = { left, top, right, bottom, width: right - left, height: bottom - top };
+      const navigation = mobileBase.querySelector('nav');
+      // A hidden menu has no visible glyphs to mask. Avoid rasterizing its tall
+      // region (and text behind it) during closed-menu touch scrolling. The
+      // visibility transition keeps the full region through the closing reveal.
+      if (getComputedStyle(navigation).visibility === 'visible') {
+        const menu = navigation.getBoundingClientRect();
+        const left = Math.min(icon.left, menu.left), top = Math.min(icon.top, menu.top);
+        const right = Math.max(icon.right, menu.right), bottom = Math.max(icon.bottom, menu.bottom);
+        header = { left, top, right, bottom, width: right - left, height: bottom - top };
+      } else header = icon;
     }
     const ratio = window.devicePixelRatio || 1;
     const width = Math.ceil(header.width), height = Math.ceil(header.height);
@@ -205,5 +219,5 @@ export function initHeaderContrast() {
   });
   observer.observe(base, { attributes: true, attributeFilter: ['style'] });
   frame = requestAnimationFrame(update);
-  return () => { cancelAnimationFrame(frame); observer.disconnect(); textObserver.disconnect(); mobileObserver.disconnect(); layer.remove(); mobileLayer.remove(); };
+  return () => { cancelAnimationFrame(frame); observer.disconnect(); textObserver.disconnect(); mobileObserver.disconnect(); layer.remove(); mobileLayer.remove(); mobileMask.destroy(); };
 }
